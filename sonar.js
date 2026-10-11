@@ -1,8 +1,4 @@
-/* Sonar navigation for the Flight Lab (portal.html). The drone knows only the landing zone and the
- * outer bounds; it finds the obstacle blocks and every object placed with the builder through
- * simulated sonar echoes (sonar-core.js), replans around them, and stops if it ever touches one.
- * Drawn on top: illustrative pulse rings, the actual sample rays, measured echoes (and echoes
- * travelling back), the drone's belief (red boxes) and its current route. */
+
 (() => {
   const core = window.SkyrlSonarCore;
   const world = window.skyrlWorld;
@@ -11,9 +7,9 @@
   const START = [-38, 8, 35];
   const GOAL = [34, 1, 31];
   const BOUNDS = { min: [-46, 1, -46], max: [46, 18, 46] };
-  const SPEED = 5;              // units per second
-  const VISUAL_SPEED = 24;      // drawn wavefront speed (real sound would cross 16 units in one frame)
-  const ECHO_PULSES = 5;        // pulses whose echoes stay on screen
+  const SPEED = 5;              
+  const VISUAL_SPEED = 24;      
+  const ECHO_PULSES = 5;       
 
   const params = new URLSearchParams(location.search);
   const seed = Number(params.get('seed')) || (Date.now() % 100000);
@@ -23,16 +19,16 @@
 
   const $ = id => document.getElementById(id);
   const view = { rays: true, rings: true, belief: true, follow: params.get('follow') === '1' };
-  const recent = [];            // last pulses, newest last
+  const recent = [];           
 
-  // ---------------------------------------------------------------- what the sonar can hit
+  
 
   const tmpBox = new THREE.Box3();
   function boxOf(object, name) {
     tmpBox.setFromObject(object);
     return { name, min: tmpBox.min.toArray(), max: tmpBox.max.toArray() };
   }
-  // The obstacle blocks don't move: measure them once (meshes only, not their edge lines).
+  
   const blockBoxes = world.blocks.children.filter(o => o.isMesh).map((m, i) => boxOf(m, `block ${i + 1}`));
   function obstacleBoxes() {
     const boxes = blockBoxes.slice();
@@ -47,13 +43,13 @@
     return boxes;
   }
 
-  // ---------------------------------------------------------------- scene overlays
+  
 
   const overlay = new THREE.Group();
   overlay.name = 'Sonar overlay';
   world.scene.add(overlay);
 
-  // Pulse rings: three great circles per pulse, growing at VISUAL_SPEED.
+ 
   const circle = new THREE.BufferGeometry().setFromPoints(
     Array.from({ length: 65 }, (_, i) => new THREE.Vector3(Math.cos(i / 64 * Math.PI * 2), 0, Math.sin(i / 64 * Math.PI * 2))));
   const rings = Array.from({ length: 8 }, () => {
@@ -71,7 +67,7 @@
   });
   let nextRing = 0;
 
-  // Sample rays of the latest pulse.
+ 
   const rayPos = new Float32Array(samplesPerPulse * 6), rayCol = new Float32Array(samplesPerPulse * 6);
   const rayGeo = new THREE.BufferGeometry();
   rayGeo.setAttribute('position', new THREE.BufferAttribute(rayPos, 3));
@@ -80,7 +76,7 @@
   rays.frustumCulled = false;
   overlay.add(rays);
 
-  // Echo points (revealed when the drawn wave reaches them) and echoes returning to the drone.
+  
   const echoCount = ECHO_PULSES * samplesPerPulse;
   const echoPos = new Float32Array(echoCount * 3), echoCol = new Float32Array(echoCount * 3);
   const echoGeo = new THREE.BufferGeometry();
@@ -96,7 +92,7 @@
   back.frustumCulled = false;
   overlay.add(back);
 
-  // The drone's belief: one red wire box per cell confirmed by echoes.
+  
   const MAX_BELIEF = 6000;
   const beliefMesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.9, 0.9, 0.9),
     new THREE.MeshBasicMaterial({ color: 0xff3b3b, wireframe: true, transparent: true, opacity: 0.85 }), MAX_BELIEF);
@@ -104,7 +100,7 @@
   beliefMesh.frustumCulled = false;
   overlay.add(beliefMesh);
 
-  // Current route.
+  
   const routePos = new Float32Array(600 * 3);
   const routeGeo = new THREE.BufferGeometry();
   routeGeo.setAttribute('position', new THREE.BufferAttribute(routePos, 3));
@@ -183,7 +179,7 @@
     backGeo.attributes.position.needsUpdate = true;
   }
 
-  // ---------------------------------------------------------------- HUD
+  
 
   const STATUS = {
     idle: '● IDLE · SONAR SCANNING', flying: '● FLYING · SONAR', landed: '● LANDED', collision: '● COLLISION · STOPPED',
@@ -227,7 +223,7 @@
     if (run) run.textContent = flight.running ? 'Ⅱ  Stop sonar flight' : '▶  Run sonar flight';
   }
 
-  // ---------------------------------------------------------------- loop and controls
+  
 
   let frame = 0;
   function update(dt) {
