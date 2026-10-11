@@ -14,6 +14,6 @@ MODE 2: Identifying People Trapped in Burning Buildings
 -----------------------------------------------------------------------
 - Helps Identify people who are trapped in burning buildings which could save their lives.
 - Also utilizes a Sonar System(which utilizes sound waves in order to avoid hitting obstacles)
-- It utilizes the YOLOv11n model to identify people 
+- It utilizes the YOLOv8m model to identify people.
 
   
