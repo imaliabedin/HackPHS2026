@@ -1,15 +1,4 @@
-/* SkyRL sonar navigation, the same method as the Unity simulator (SonarSensor / SonarMap /
- * SonarNavigator / CollisionMonitor), without any 3D library so it can be tested in Node.
- *
- * - SonarSensor: each pulse fires 50 beams (16 around x 3 rows at -30/0/+30 deg, plus up and down),
- *   each with a main sample and 4 sub-samples. Samples are "fat rays" (a sphere of `radius` swept
- *   along the ray), the pattern rotates and dithers every pulse, and measurements get range noise,
- *   missed echoes and false echoes. The ground is a known plane. Physics stand-in: obstacle boxes.
- * - SonarBelief: evidence per grid cell built only from echoes; grid points too close to a confirmed
- *   echo point (the drone's half-size plus a margin) are blocked for planning.
- * - SonarFlight: A* over the belief (knows only the goal and the outer bounds), replans when a newly
- *   confirmed obstacle blocks its path, and a separate collision check stops it on contact.
- */
+
 (function (root) {
   'use strict';
 
@@ -66,7 +55,7 @@
     return { t: tmin, normal: n };
   }
 
-  // ---------------------------------------------------------------- sensor
+  // sensor
 
   const SENSOR_DEFAULTS = {
     horizontalBeams: 16,
